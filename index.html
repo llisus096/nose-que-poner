@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especial de Neón</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #0a0a0c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+        }
+        /* Corazón de Neón con CSS */
+        .heart {
+            position: relative;
+            width: 200px;
+            height: 180px;
+            animation: latido 1.2s infinite alternate;
+            margin: 0 auto 30px auto;
+        }
+        .heart::before, .heart::after {
+            position: absolute;
+            content: "";
+            left: 100px;
+            top: 0;
+            width: 100px;
+            height: 160px;
+            background: linear-gradient(45deg, #ff007f, #00e5ff);
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.6);
+        }
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+            background: linear-gradient(135deg, #00e5ff, #ff007f);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+        }
+        @keyframes latido {
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.05); }
+        }
+        /* Texto brillante */
+        h1 {
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #00e5ff, 0 0 30px #ffffff;
+            margin: 0;
+        }
+        p {
+            color: #00e5ff;
+            font-size: 16px;
+            margin-top: 10px;
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heart"></div>
+        <h1>I LOVE YOU</h1>
+        <p>❤️ Para alguien muy especial ❤️</p>
+    </div>
+</body>
+</html>
