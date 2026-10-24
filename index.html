@@ -3,75 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Especial de Neón</title>
+    <title>Para Ti ❤️</title>
     <style>
-        body {
+        * {
             margin: 0;
-            background-color: #0a0a0c;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #050508;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
         }
-        .container {
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
             text-align: center;
-            position: relative;
+            pointer-events: none;
+            padding: 20px;
         }
-        /* Corazón de Neón con CSS */
-        .heart {
+        /* Corazón Neón Bicolore Avanzado */
+        .neon-heart {
             position: relative;
-            width: 200px;
-            height: 180px;
-            animation: latido 1.2s infinite alternate;
-            margin: 0 auto 30px auto;
+            width: 140px;
+            height: 130px;
+            margin: 0 auto 40px auto;
+            animation: pulse 1.2s infinite ease-in-out;
+            filter: drop-shadow(0 0 20px #ff007f) drop-shadow(0 0 40px #00e5ff);
         }
-        .heart::before, .heart::after {
+        .neon-heart::before,
+        .neon-heart::after {
             position: absolute;
             content: "";
-            left: 100px;
+            left: 70px;
             top: 0;
-            width: 100px;
-            height: 160px;
-            background: linear-gradient(45deg, #ff007f, #00e5ff);
+            width: 70px;
+            height: 115px;
+            background: linear-gradient(180deg, #ff007f, #00e5ff);
             border-radius: 50px 50px 0 0;
             transform: rotate(-45deg);
             transform-origin: 0 100%;
-            box-shadow: 0 0 30px rgba(255, 0, 127, 0.6);
         }
-        .heart::after {
+        .neon-heart::after {
             left: 0;
             transform: rotate(45deg);
             transform-origin: 100% 100%;
-            background: linear-gradient(135deg, #00e5ff, #ff007f);
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+            background: linear-gradient(180deg, #00e5ff, #ff007f);
         }
-        @keyframes latido {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.05); }
+        @keyframes pulse {
+            0% { transform: scale(0.9) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+            100% { transform: scale(0.9) rotate(0deg); }
         }
-        /* Texto brillante */
+        /* Textos con Neón */
         h1 {
-            color: white;
-            font-size: 26px;
-            font-weight: bold;
-            text-shadow: 0 0 10px #ff007f, 0 0 20px #00e5ff, 0 0 30px #ffffff;
-            margin: 0;
+            color: #ffffff;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 40px #00e5ff;
+            margin-bottom: 15px;
+            min-height: 2.5rem;
         }
         p {
             color: #00e5ff;
-            font-size: 16px;
-            margin-top: 10px;
-            text-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+            font-size: 1.1rem;
+            text-shadow: 0 0 8px #00e5ff, 0 0 15px #00e5ff;
+            opacity: 0.9;
+        }
+        .hint {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            z-index: 3;
+            pointer-events: none;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="heart"></div>
-        <h1>I LOVE YOU</h1>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="content">
+        <div class="neon-heart"></div>
+        <h1 id="typewriter"></h1>
         <p>❤️ Para alguien muy especial ❤️</p>
     </div>
+
+    <div class="hint">✨ Toca la pantalla para crear magia ✨</div>
+
+    <script>
+        // Configuración del Canvas e Interacción
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Partículas de Lluvia y Explosión
+        const particles = [];
+        const colors = ['#ff007f', '#00e5ff', '#ffffff', '#ff66cc', '#33ffff'];
+
+        class Particle {
+            constructor(x, y, isBurst = false) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || (isBurst ? y : -20);
+                this.size = Math.random() * (isBurst ? 12 : 8) + 4;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.speedY = isBurst ? (Math.random() - 0.5) * 8 : Math.random() * 2 + 1;
+                this.speedX = isBurst ? (Math.random() - 0.5) * 8 : (Math.random() - 0.5) * 1;
+                this.opacity = 1;
+                this.fade = isBurst ? Math.random() * 0.02 + 0.01 : 0;
+                this.isBurst = isBurst;
+            }
+
+            drawHeart(x, y, size, color, opacity) {
+                ctx.save();
+                ctx.globalAlpha = opacity;
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = color;
+                
+                const topCurveHeight = size * 0.3;
+                ctx.moveTo(x, y + topCurveHeight);
+                ctx.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + topCurveHeight);
+                ctx.bezierCurveTo(x - size / 2, y + (size + topCurveHeight) / 2, x, y + size, x, y + size);
+                ctx.bezierCurveTo(x, y + size, x + size / 2, y + (size + topCurveHeight) / 2, x + size / 2, y + topCurveHeight);
+                ctx.bezierCurveTo(x + size / 2, y, x, y, x, y + topCurveHeight);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                if (this.isBurst) {
+                    this.opacity -= this.fade;
+                } else if (this.y > canvas.height + 20) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        // Generar lluvia inicial
+        for (let i = 0; i < 60; i++) {
+            particles.push(new Particle(Math.random() * window.innerWidth, Math.random() * window.innerHeight));
+        }
+
+        function createBurst(x, y) {
+            for (let i = 0; i < 20; i++) {
+                particles.push(new Particle(x, y, true));
+            }
+        }
+
+        window.addEventListener('pointerdown', (e) => {
+            createBurst(e.clientX, e.clientY);
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.drawHeart(p.x, p.y, p.size, p.color, p.opacity);
+
+                if (p.opacity <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // Mantener la lluvia constante
+            if (particles.filter(p => !p.isBurst).length < 60) {
+                particles.push(new Particle());
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Efecto Máquina de Escribir para el Título
+        const text = "ERES INCREÍBLE";
+        let index = 0;
+        const speed = 150;
+
+        function typeWriter() {
+            if (index < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+        setTimeout(typeWriter, 500);
+    </script>
 </body>
 </html>
